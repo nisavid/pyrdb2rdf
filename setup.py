@@ -59,7 +59,7 @@ TROVE_CLASSIFIERS = \
 SETUP_DEPS = ()
 
 INSTALL_DEPS = ('rdflib', 'spruce-collections', 'spruce-datetime',
-                'spruce-lang', 'sqlalchemy >=0.9.1')
+                'spruce-lang', 'spruce-uri', 'sqlalchemy >=0.9.1')
 
 EXTRAS_DEPS = {}
 
