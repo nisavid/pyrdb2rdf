@@ -7,37 +7,95 @@ __maintainer__ = "Ivan D Vasin"
 __email__ = "nisavid@gmail.com"
 __docformat__ = "restructuredtext"
 
+import io as _io
+import os as _os
+import re as _re
+
 from setuptools import find_packages as _find_packages, setup as _setup
+
+
+# helpers ---------------------------------------------------------------------
+
+
+MOD_DOC_RE = _re.compile(r'\A(?:(?:\s*(?:\#[^$]*)?)\n)*'
+                          r'(?:(?P<dquot>""")|(?P<squot>\'\'\'))\n?'
+                          r'(?P<doc>.*)'
+                          r'(?(dquot)"""|\'\'\')',
+                         _re.DOTALL | _re.MULTILINE)
+
+MOD_VERSION_RE = _re.compile(r'^__version__ = [\'"](?P<version>[^\'"]*)[\'"]$',
+                             _re.MULTILINE)
+
+
+def file_abspath_from_parts(*relpath_parts):
+    return _os.path.join(_os.path.abspath(_os.path.dirname(__file__)),
+                         *relpath_parts)
+
+
+def shortdoc_from_doc(doc):
+    def iter_shortdoc_lines():
+        for line in doc.split(_os.linesep):
+            if not line.strip():
+                return
+
+            if line[-1] in '.?!':
+                line += ' '
+
+            yield line
+    return ' '.join(iter_shortdoc_lines())
+
+
+def read_doc(mod_filepath):
+
+    mod_text = _io.open(mod_filepath).read()
+    match = MOD_DOC_RE.search(mod_text)
+
+    if not match:
+        raise RuntimeError('cannot find module docstring in file {!r} with'
+                            ' pattern {!r}'
+                            .format(mod_filepath, MOD_DOC_RE.pattern))
+
+    return match.group('doc')
+
+
+def read_version(mod_filepath):
+
+    mod_text = _io.open(mod_filepath).read()
+    mod_version_match = MOD_VERSION_RE.search(mod_text)
+
+    if not mod_version_match:
+        raise RuntimeError('cannot find module version string in file {!r}'
+                            ' with pattern {!r}'
+                            .format(mod_filepath, MOD_VERSION_RE.pattern))
+
+    return mod_version_match.group('version')
 
 
 # basics ----------------------------------------------------------------------
 
 NAME = 'rdb2rdf'
 
-ROOT_PKG_NAME = NAME.lower().replace('-', '_')
+ROOT_PKG_NAME = _re.sub(r'[^\d\w]', '_', _re.sub(r'^[^\w]', '_', NAME))
 
-ROOT_PKG = __import__(ROOT_PKG_NAME)
+ROOT_PKG_ABSPATH = file_abspath_from_parts(*(ROOT_PKG_NAME.split('.')
+                                              + ['__init__.py']))
 
-VERSION = ROOT_PKG.__version__
+VERSION = read_version(ROOT_PKG_ABSPATH)
 
 SITE_URI = ''
 
 DOWNLOAD_URI = 'https://github.com/nisavid/pyrdb2rdf'
 
-DESCRIPTION = \
-    iter(line for line in ROOT_PKG.__doc__.split('\n') if line.strip()).next()
+DESCRIPTION = shortdoc_from_doc(read_doc(ROOT_PKG_ABSPATH))
 
 README_FILE = 'README.rst'
-with open(README_FILE, 'r') as _file:
-    README = _file.read()
+README = _io.open(README_FILE, 'r').read()
 
 CHANGES_FILE = 'CHANGES.rst'
-with open(CHANGES_FILE, 'r') as _file:
-    CHANGES = _file.read()
+CHANGES = _io.open(CHANGES_FILE, 'r').read()
 
 LICENSE_FILE = 'LICENSE'
-with open(LICENSE_FILE, 'r') as _file:
-    LICENSE = _file.read()
+LICENSE = _io.open(LICENSE_FILE, 'r').read()
 
 LONG_DESCRIPTION = '\n\n'.join((README, CHANGES))
 
@@ -70,7 +128,7 @@ DEPS_SEARCH_URIS = ()
 
 # packages --------------------------------------------------------------------
 
-NAMESPACE_PKGS_PATHS = ()
+NAMESPACE_PKGS_NAMES = ()
 
 SCRIPTS_PKG_NAME = '.'.join((ROOT_PKG_NAME, 'scripts'))
 
@@ -112,7 +170,7 @@ if __name__ == '__main__':
            extras_require=EXTRAS_DEPS,
            tests_require=TESTS_DEPS,
            dependency_links=DEPS_SEARCH_URIS,
-           namespace_packages=NAMESPACE_PKGS_PATHS,
+           namespace_packages=NAMESPACE_PKGS_NAMES,
            packages=_find_packages(),
            test_suite=TESTS_PKG_NAME,
            include_package_data=True,
