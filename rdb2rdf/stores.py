@@ -17,8 +17,8 @@ from urllib import unquote as _pct_decoded
 
 import rdflib as _rdf
 from spruce.collections import frozendict as _frozendict
-from spruce.lang import require_isinstance as _require_isinstance
-import spruce.uri.duck as _iri_duck
+from spruce.types import require_isinstance as _require_isinstance
+import spruce.iri.goose as _iri_goose
 import sqlalchemy as _sqla
 _sqlaf = _sqla.func
 import sqlalchemy.orm as _sqla_orm
@@ -156,7 +156,7 @@ class DirectMapping(_rdf.store.Store):
 
     @base_iri.setter
     def _(self, value):
-        _require_isinstance(value, _iri_duck.UriReference)
+        _require_isinstance(value, _iri_goose.UriReference)
         self._base_iri = value
 
     def bind(self, prefix, namespace):
