@@ -5,7 +5,7 @@ PyRDB2RDF
 PyRDB2RDF provides RDFLib_ with an interface to relational databases as
 RDF_ stores_.  The underlying data is accessed via SQLAlchemy_.  It is
 mapped to RDF according to the specifications of RDB2RDF_.  The
-corresponding RDF graph is represented as an RDFLib Graph_.
+corresponding RDF graph is represented as an RDFLib graph_.
 
 Translating from relational data to RDF via `direct mapping`_ is
 currently supported.  Translating in the other direction and mapping
@@ -13,6 +13,9 @@ with R2RML_ are planned but not yet implemented.
 
 
 .. _direct mapping: http://www.w3.org/TR/rdb-direct-mapping/
+
+.. _graph:
+    http://rdflib.readthedocs.org/en/latest/apidocs/rdflib.html#module-rdflib.graph
 
 .. _R2RML: http://www.w3.org/TR/r2rml/
 
