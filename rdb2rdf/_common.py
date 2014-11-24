@@ -9,7 +9,7 @@ from datetime import timedelta as _timedelta
 from urllib import quote as _pct_encoded
 
 import rdflib as _rdf
-import spruce.datetime as _dt
+import spruce.datetime as _sdt
 import sqlalchemy as _sqla
 
 
@@ -237,12 +237,12 @@ _RDF_DATATYPES_BY_SQL_TYPE[_sqla.sql.type_api.TypeEngine] = [None]
 
 def _timedelta_from_rdf_duration(literal):
 
-    match = _dt.ISO8601_DURATION_RE.match(literal)
+    match = _sdt.ISO8601_DURATION_RE.match(literal)
 
     if not match:
         raise ValueError('invalid RDF interval literal {!r}: expecting a'
                           ' literal that matches the format {!r}'
-                          .format(literal, _dt.ISO8601_DURATION_RE.pattern))
+                          .format(literal, _sdt.ISO8601_DURATION_RE.pattern))
 
     return _timedelta(years=int(match.group('years') or 0),
                       months=int(match.group('months') or 0),

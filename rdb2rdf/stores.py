@@ -1097,18 +1097,6 @@ class DirectMapping(_rdf.store.Store):
         return _rdf.URIRef(iri)
 
 
-class R2RML(_rdf.store.Store):
-
-    """
-
-    .. _R2RML: http://www.w3.org/TR/r2rml/
-
-
-    """
-
-    # FIXME
-
-
 def _orm_column_property_by_name(mapper):
     return _frozendict((prop.key, prop) for prop in mapper.column_attrs)
 
